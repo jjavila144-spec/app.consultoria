@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>J Consultorías - Plataforma de Consultoría Ágil</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- HEADER / NAVBAR -->
+  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-brand-500 p-2 rounded-lg">
+          <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-xl tracking-tight leading-none"><span class="text-brand-500">J</span> Consultorías</h1>
+          <p class="text-xs text-slate-400">Transformación & Metodologías Ágiles</p>
+        </div>
+      </div>
+
+      <!-- Empresa Activa Select -->
+      <div class="flex items-center space-x-3">
+        <span class="text-xs text-slate-400 hidden sm:inline">Cliente activo:</span>
+        <select id="clientSelector" onchange="changeClient()" class="bg-slate-800 border border-slate-700 text-sm text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-brand-500">
+          <option value="TechCorp Solutions">TechCorp Solutions</option>
+          <option value="Banco Financiero Innova">Banco Financiero Innova</option>
+          <option value="Logística Global S.A.">Logística Global S.A.</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-white border-b border-slate-200 sticky top-[57px] z-40">
+    <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto no-scrollbar space-x-1 sm:space-x-4">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-tab px-4 py-3 text-sm font-medium border-b-2 border-brand-500 text-brand-600 flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Panel Ejecutivo</span>
+      </button>
+      <button onclick="switchTab('assessment')" id="tab-assessment" class="nav-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+        <span>Diagnóstico de Madurez</span>
+      </button>
+      <button onclick="switchTab('kanban')" id="tab-kanban" class="nav-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="kanban" class="w-4 h-4"></i>
+        <span>Tablero de Trabajo</span>
+      </button>
+      <button onclick="switchTab('ceremonies')" id="tab-ceremonies" class="nav-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="timer" class="w-4 h-4"></i>
+        <span>Guía de Ceremonias</span>
+      </button>
+      <button onclick="switchTab('templates')" id="tab-templates" class="nav-tab px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>Plantillas Ágiles</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+    <!-- TAB 1: DASHBOARD -->
+    <section id="content-dashboard" class="tab-content active space-y-6">
+      <!-- Welcome Header -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between bg-white p-6 rounded-xl shadow-sm border border-slate-200 gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900" id="dashClientTitle">TechCorp Solutions</h2>
+          <p class="text-slate-500 text-sm">Estado actual de la transformación ágil gestionada por <strong>J Consultorías</strong>.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+            <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full"></span> Transformación Activa
+          </span>
+          <button onclick="window.print()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg flex items-center space-x-1">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>Exportar Informe</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="p-3 bg-brand-50 text-brand-600 rounded-lg">
+            <i data-lucide="award" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Índice Madurez Ágil</p>
+            <h3 class="text-2xl font-bold text-slate-900" id="kpiScore">3.8 / 5.0</h3>
+            <span class="text-xs text-emerald-600 font-medium">Nivel Avanzado</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Equipos Impactados</p>
+            <h3 class="text-2xl font-bold text-slate-900">6 Equipos</h3>
+            <span class="text-xs text-slate-500">~45 colaboradores</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Velocidad Promedio</p>
+            <h3 class="text-2xl font-bold text-slate-900" id="kpiVelocity">34 Pts / Sprint</h3>
+            <span class="text-xs text-emerald-600 font-medium">+12% vs mes anterior</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Entregables Cumplidos</p>
+            <h3 class="text-2xl font-bold text-slate-900">89%</h3>
+            <span class="text-xs text-slate-500">Predictibilidad alta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Chart 1: Radar Madurez -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-2">Radiografía de Madurez por Pilar</h3>
+          <p class="text-xs text-slate-500 mb-4">Puntuación comparativa en las 5 dimensiones evaluadas.</p>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Velocity / Trend -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-2">Evolución de Velocidad (Sprints)</h3>
+          <p class="text-xs text-slate-500 mb-4">Puntos de historia completados en los últimos 6 sprints.</p>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="velocityChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recomendaciones de la Consultoría -->
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-xl shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-amber-400">
+          <i data-lucide="lightbulb" class="w-5 h-5"></i>
+          <h3 class="font-bold text-base">Recomendación Prioritaria — J Consultorías</h3>
+        </div>
+        <p class="text-sm text-slate-300 leading-relaxed" id="recommendationText">
+          El pilar con mayor oportunidad de mejora es <span class="text-white font-semibold underline">Métricas & Feedback</span>. Se recomienda implementar paneles automatizados de Lead Time / Cycle Time y reforzar la disciplina de las retrospectivas orientadas a accionables claros.
+        </p>
+      </div>
+    </section>
+
+    <!-- TAB 2: DIAGNÓSTICO (ASSESSMENT) -->
+    <section id="content-assessment" class="tab-content space-y-6">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900">Evaluador de Madurez Ágil</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          Responde estas preguntas con el equipo para calcular la madurez organizacional en una escala de 1 a 5.
+        </p>
+      </div>
+
+      <div id="assessmentQuestions" class="space-y-4">
+        <!-- JS Insertará dinámicamente las preguntas -->
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <button onclick="calculateAssessment()" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow flex items-center space-x-2">
+          <i data-lucide="calculator" class="w-4 h-4"></i>
+          <span>Calcular y Guardar Diagnóstico</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 3: TABLERO KANBAN -->
+    <section id="content-kanban" class="tab-content space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Tablero de Trabajo — J Consultorías</h2>
+          <p class="text-sm text-slate-500 mt-1">Seguimiento de las iniciativas de transformación y proyectos piloto.</p>
+        </div>
+        <button onclick="openAddTaskModal()" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center space-x-2">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Nueva Tarea</span>
+        </button>
+      </div>
+
+      <!-- Kanban Columns -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Por Hacer -->
+        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col min-h-[400px]">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-bold text-slate-700 text-sm flex items-center gap-2">
+              <span class="w-2.5 h-2.5 bg-slate-400 rounded-full"></span> Por Hacer
+            </span>
+            <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium" id="count-todo">0</span>
+          </div>
+          <div id="col-todo" class="space-y-3 flex-grow overflow-y-auto"></div>
+        </div>
+
+        <!-- En Proceso -->
+        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col min-h-[400px]">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-bold text-slate-700 text-sm flex items-center gap-2">
+              <span class="w-2.5 h-2.5 bg-amber-500 rounded-full"></span> En Proceso
+            </span>
+            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium" id="count-inprogress">0</span>
+          </div>
+          <div id="col-inprogress" class="space-y-3 flex-grow overflow-y-auto"></div>
+        </div>
+
+        <!-- En Revisión -->
+        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col min-h-[400px]">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-bold text-slate-700 text-sm flex items-center gap-2">
+              <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full"></span> En Revisión
+            </span>
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full font-medium" id="count-review">0</span>
+          </div>
+          <div id="col-review" class="space-y-3 flex-grow overflow-y-auto"></div>
+        </div>
+
+        <!-- Completado -->
+        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col min-h-[400px]">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-bold text-slate-700 text-sm flex items-center gap-2">
+              <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span> Completado
+            </span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium" id="count-done">0</span>
+          </div>
+          <div id="col-done" class="space-y-3 flex-grow overflow-y-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: GUÍA Y TEMPORIZADOR DE CEREMONIAS -->
+    <section id="content-ceremonies" class="tab-content space-y-6">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900">Guía y Temporizador de Ceremonias Ágiles</h2>
+        <p class="text-sm text-slate-500 mt-1">Facilita reuniones eficientes respetando el timeboxing y la estructura recomendada.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Selector de Ceremonia -->
+        <div class="space-y-3">
+          <button onclick="selectCeremony('daily')" id="btn-ceremony-daily" class="ceremony-btn w-full text-left p-4 rounded-xl border border-brand-500 bg-brand-50 font-medium text-slate-900 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="clock" class="w-5 h-5 text-brand-600"></i>
+              <div>
+                <h4 class="font-bold text-sm">Daily Standup</h4>
+                <p class="text-xs text-slate-500">Sincronización diaria</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-white px-2 py-1 rounded border">15 min</span>
+          </button>
+
+          <button onclick="selectCeremony('planning')" id="btn-ceremony-planning" class="ceremony-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-medium text-slate-900 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i>
+              <div>
+                <h4 class="font-bold text-sm">Sprint Planning</h4>
+                <p class="text-xs text-slate-500">Planificación del Sprint</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-slate-100 px-2 py-1 rounded border">60 min</span>
+          </button>
+
+          <button onclick="selectCeremony('review')" id="btn-ceremony-review" class="ceremony-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-medium text-slate-900 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="presentation" class="w-5 h-5 text-emerald-600"></i>
+              <div>
+                <h4 class="font-bold text-sm">Sprint Review</h4>
+                <p class="text-xs text-slate-500">Demostración e incremento</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-slate-100 px-2 py-1 rounded border">45 min</span>
+          </button>
+
+          <button onclick="selectCeremony('retro')" id="btn-ceremony-retro" class="ceremony-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-medium text-slate-900 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="refresh-cw" class="w-5 h-5 text-amber-600"></i>
+              <div>
+                <h4 class="font-bold text-sm">Retrospectiva</h4>
+                <p class="text-xs text-slate-500">Mejora continua</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-slate-100 px-2 py-1 rounded border">45 min</span>
+          </button>
+        </div>
+
+        <!-- Timer & Facilitación -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+          <div class="flex items-center justify-between border-b pb-4">
+            <div>
+              <h3 class="font-bold text-lg text-slate-900" id="ceremonyTitle">Daily Standup</h3>
+              <p class="text-xs text-slate-500" id="ceremonyGoal">Alinear al equipo y detectar impedimentos.</p>
+            </div>
+            <!-- Timer Controls -->
+            <div class="text-right">
+              <div class="text-3xl font-mono font-bold text-slate-900" id="timerDisplay">15:00</div>
+              <div class="space-x-1 mt-1">
+                <button onclick="toggleTimer()" id="timerStartBtn" class="px-3 py-1 bg-brand-600 text-white text-xs font-semibold rounded hover:bg-brand-700">Iniciar</button>
+                <button onclick="resetTimer()" class="px-3 py-1 bg-slate-200 text-slate-700 text-xs font-semibold rounded hover:bg-slate-300">Reiniciar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agenda / Checklist -->
+          <div>
+            <h4 class="font-bold text-sm text-slate-900 mb-3">Checklist de Facilitación Recomendado:</h4>
+            <ul class="space-y-2 text-sm" id="ceremonyChecklist">
+              <!-- Insertado por JS -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: PLANTILLAS Y RECURSOS -->
+    <section id="content-templates" class="tab-content space-y-6">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900">Biblioteca de Plantillas Ágiles — J Consultorías</h2>
+        <p class="text-sm text-slate-500 mt-1">Descarga o copia formatos estándar para tus sesiones de consultoría.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Template 1 -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center space-x-2 text-brand-600 mb-2">
+              <i data-lucide="check-square" class="w-5 h-5"></i>
+              <h3 class="font-bold text-base text-slate-900">Definition of Done (DoD)</h3>
+            </div>
+            <p class="text-xs text-slate-500">Criterios de calidad que debe cumplir cada historia antes de darse por completada.</p>
+          </div>
+          <button onclick="copyTemplate('dod')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2 rounded-lg flex items-center justify-center space-x-2">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copiar Plantilla</span>
+          </button>
+        </div>
+
+        <!-- Template 2 -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center space-x-2 text-indigo-600 mb-2">
+              <i data-lucide="star" class="w-5 h-5"></i>
+              <h3 class="font-bold text-base text-slate-900">Retro: Starfish (Estrella)</h3>
+            </div>
+            <p class="text-xs text-slate-500">Formato para dinámicas de retrospectiva: Comenzar, Hacer más, Continuar, Hacer menos, Detener.</p>
+          </div>
+          <button onclick="copyTemplate('starfish')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2 rounded-lg flex items-center justify-center space-x-2">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copiar Plantilla</span>
+          </button>
+        </div>
+
+        <!-- Template 3 -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center space-x-2 text-emerald-600 mb-2">
+              <i data-lucide="target" class="w-5 h-5"></i>
+              <h3 class="font-bold text-base text-slate-900">Matriz de OKRs</h3>
+            </div>
+            <p class="text-xs text-slate-500">Estructura para definir Objetivos y Resultados Clave alineados a nivel de negocio y equipo.</p>
+          </div>
+          <button onclick="copyTemplate('okrs')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2 rounded-lg flex items-center justify-center space-x-2">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copiar Plantilla</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL NUEVA TAREA KANBAN -->
+  <div id="addTaskModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl p-6 space-y-4">
+      <h3 class="text-lg font-bold text-slate-900">Nueva Tarea</h3>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-600">Título de la tarea</label>
+          <input type="text" id="taskTitle" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-500" placeholder="Ej: Capacitar en Story Points">
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-600">Puntos de Historia</label>
+          <input type="number" id="taskPoints" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-500" value="3">
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-600">Prioridad</label>
+          <select id="taskPriority" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-500">
+            <option value="Baja">Baja</option>
+            <option value="Media" selected>Media</option>
+            <option value="Alta">Alta</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2">
+        <button onclick="closeAddTaskModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg">Cancelar</button>
+        <button onclick="saveNewTask()" class="px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg hover:bg-brand-700">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // DATA & STATE
+    let currentClient = 'TechCorp Solutions';
+    let assessmentScores = { cultura: 4, ceremonias: 4, herramientas: 3, metricas: 2, liderazgo: 4 };
+    let tasks = [
+      { id: 1, title: 'Definir DoD con Equipo Dev', points: 3, priority: 'Alta', status: 'todo' },
+      { id: 2, title: 'Taller de Estimación con Poker', points: 5, priority: 'Media', status: 'inprogress' },
+      { id: 3, title: 'Configuración de Tableros Jira', points: 2, priority: 'Baja', status: 'review' },
+      { id: 4, title: 'Kickoff de Transformación', points: 8, priority: 'Alta', status: 'done' }
+    ];
+
+    const questionsData = [
+      { id: 'cultura', title: '1. Cultura & Colaboración', text: '¿Los equipos son autoorganizados y existe seguridad psicológica para fallar y aprender?' },
+      { id: 'ceremonias', title: '2. Disciplina en Ceremonias', text: '¿Se realizan la Daily, Planning, Review y Retro respetando el Timeboxing?' },
+      { id: 'herramientas', title: '3. Uso de Herramientas Visuales', text: '¿El trabajo está 100% visibilizado en tableros Kanban o herramientas de gestión?' },
+      { id: 'metricas', title: '4. Métricas & Feedback Loop', text: '¿Se mide la velocidad, Lead Time o satisfacción del cliente de forma continua?' },
+      { id: 'liderazgo', title: '5. Liderazgo e Impulso', text: '¿Los líderes actúan como Servant Leaders eliminando bloqueos e impedimentos?' }
+    ];
+
+    const ceremonyData = {
+      daily: {
+        title: 'Daily Standup',
+        goal: 'Sincronizar al equipo y detectar bloqueos temprano.',
+        time: 15,
+        checklist: [
+          '¿Qué completé ayer para aportar al Sprint Goal?',
+          '¿En qué me enfocaré hoy?',
+          '¿Tengo algún impedimento o bloqueo que requiera ayuda?'
+        ]
+      },
+      planning: {
+        title: 'Sprint Planning',
+        goal: 'Acordar el Sprint Goal y seleccionar el Backlog de trabajo.',
+        time: 60,
+        checklist: [
+          'El Product Owner presenta la prioridad del Backlog.',
+          'El equipo aclara dudas y estima las historias.',
+          'Se define formalmente el Sprint Goal.'
+        ]
+      },
+      review: {
+        title: 'Sprint Review',
+        goal: 'Demostrar el incremento de software/valor a los interesados.',
+        time: 45,
+        checklist: [
+          'Presentar únicamente ítems que cumplan el Definition of Done (DoD).',
+          'Recibir retroalimentación directa de los clientes/sponsors.',
+          'Ajustar el Product Backlog si es necesario.'
+        ]
+      },
+      retro: {
+        title: 'Retrospectiva',
+        goal: 'Analizar cómo mejorar como equipo para el siguiente ciclo.',
+        time: 45,
+        checklist: [
+          'Revisar el cumplimiento de los acuerdos del Sprint anterior.',
+          'Identificar qué funcionó bien y qué oportunidades de mejora existen.',
+          'Definir máximo 2 acciones concretas de mejora con un responsable.'
+        ]
+      }
+    };
+
+    // CHARTS INSTANCES
+    let radarChartInstance = null;
+    let velocityChartInstance = null;
+
+    // INIT APP
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderQuestions();
+      renderKanban();
+      initCharts();
+      selectCeremony('daily');
+    });
+
+    // TAB NAVIGATION
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.classList.remove('border-brand-500', 'text-brand-600');
+        el.classList.add('border-transparent', 'text-slate-600');
+      });
+
+      document.getElementById(`content-${tabId}`).classList.add('active');
+      const activeNav = document.getElementById(`tab-${tabId}`);
+      activeNav.classList.remove('border-transparent', 'text-slate-600');
+      activeNav.classList.add('border-brand-500', 'text-brand-600');
+    }
+
+    // CLIENT SELECTOR
+    function changeClient() {
+      currentClient = document.getElementById('clientSelector').value;
+      document.getElementById('dashClientTitle').innerText = currentClient;
+    }
+
+    // DIAGNOSTIC / ASSESSMENT
+    function renderQuestions() {
+      const container = document.getElementById('assessmentQuestions');
+      container.innerHTML = questionsData.map(q => `
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex justify-between items-start">
+            <h4 class="font-bold text-slate-900 text-sm">${q.title}</h4>
+            <span class="text-xs bg-brand-50 text-brand-700 px-2 py-0.5 rounded font-semibold" id="val-${q.id}">Puntaje: 4/5</span>
+          </div>
+          <p class="text-xs text-slate-500">${q.text}</p>
+          <input type="range" min="1" max="5" value="${assessmentScores[q.id]}" class="w-full accent-brand-600" oninput="updateRangeLabel('${q.id}', this.value)">
+        </div>
+      `).join('');
+    }
+
+    function updateRangeLabel(id, val) {
+      assessmentScores[id] = parseInt(val);
+      document.getElementById(`val-${id}`).innerText = `Puntaje: ${val}/5`;
+    }
+
+    function calculateAssessment() {
+      const values = Object.values(assessmentScores);
+      const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1);
+      
+      document.getElementById('kpiScore').innerText = `${avg} / 5.0`;
+      updateCharts();
+      switchTab('dashboard');
+    }
+
+    // CHARTS INITIALIZATION
+    function initCharts() {
+      // Radar Chart
+      const ctxRadar = document.getElementById('radarChart').getContext('2d');
+      radarChartInstance = new Chart(ctxRadar, {
+        type: 'radar',
+        data: {
+          labels: ['Cultura', 'Ceremonias', 'Herramientas', 'Métricas', 'Liderazgo'],
+          datasets: [{
+            label: 'Nivel Actual',
+            data: Object.values(assessmentScores),
+            backgroundColor: 'rgba(2, 132, 199, 0.2)',
+            borderColor: 'rgba(2, 132, 199, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(2, 132, 199, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: { min: 0, max: 5, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+
+      // Velocity Chart
+      const ctxVelocity = document.getElementById('velocityChart').getContext('2d');
+      velocityChartInstance = new Chart(ctxVelocity, {
+        type: 'bar',
+        data: {
+          labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4', 'Sprint 5', 'Sprint 6'],
+          datasets: [{
+            label: 'Puntos Completados',
+            data: [22, 26, 28, 31, 30, 34],
+            backgroundColor: '#0369a1',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function updateCharts() {
+      if (radarChartInstance) {
+        radarChartInstance.data.datasets[0].data = Object.values(assessmentScores);
+        radarChartInstance.update();
+      }
+    }
+
+    // KANBAN LOGIC
+    function renderKanban() {
+      const cols = ['todo', 'inprogress', 'review', 'done'];
+      cols.forEach(col => {
+        const filtered = tasks.filter(t => t.status === col);
+        document.getElementById(`count-${col}`).innerText = filtered.length;
+        
+        const container = document.getElementById(`col-${col}`);
+        container.innerHTML = filtered.map(t => `
+          <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm space-y-2">
+            <h4 class="font-semibold text-sm text-slate-800">${t.title}</h4>
+            <div class="flex items-center justify-between text-xs">
+              <span class="px-2 py-0.5 rounded font-medium ${t.priority === 'Alta' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}">${t.priority}</span>
+              <span class="font-mono text-slate-500 font-bold">${t.points} pts</span>
+            </div>
+          </div>
+        `).join('');
+      });
+    }
+
+    function openAddTaskModal() {
+      document.getElementById('addTaskModal').classList.remove('hidden');
+      document.getElementById('addTaskModal').classList.add('flex');
+    }
+
+    function closeAddTaskModal() {
+      document.getElementById('addTaskModal').classList.add('hidden');
+      document.getElementById('addTaskModal').classList.remove('flex');
+    }
+
+    function saveNewTask() {
+      const title = document.getElementById('taskTitle').value;
+      const points = parseInt(document.getElementById('taskPoints').value) || 1;
+      const priority = document.getElementById('taskPriority').value;
+
+      if (!title) return;
+
+      tasks.push({ id: Date.now(), title, points, priority, status: 'todo' });
+      renderKanban();
+      closeAddTaskModal();
+      document.getElementById('taskTitle').value = '';
+    }
+
+    // TIMER & CEREMONIES LOGIC
+    let timerInterval = null;
+    let secondsLeft = 15 * 60;
+    let isRunning = false;
+
+    function selectCeremony(type) {
+      const data = ceremonyData[type];
+      document.getElementById('ceremonyTitle').innerText = data.title;
+      document.getElementById('ceremonyGoal').innerText = data.goal;
+      
+      secondsLeft = data.time * 60;
+      updateTimerDisplay();
+      stopTimer();
+
+      document.getElementById('ceremonyChecklist').innerHTML = data.checklist.map(item => `
+        <li class="flex items-start space-x-2">
+          <input type="checkbox" class="mt-1 accent-brand-600">
+          <span class="text-slate-700">${item}</span>
+        </li>
+      `).join('');
+    }
+
+    function toggleTimer() {
+      if (isRunning) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      isRunning = true;
+      document.getElementById('timerStartBtn').innerText = 'Pausar';
+      timerInterval = setInterval(() => {
+        if (secondsLeft > 0) {
+          secondsLeft--;
+          updateTimerDisplay();
+        } else {
+          stopTimer();
+          alert('¡Tiempo de la ceremonia finalizado!');
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      isRunning = false;
+      clearInterval(timerInterval);
+      document.getElementById('timerStartBtn').innerText = 'Iniciar';
+    }
+
+    function resetTimer() {
+      stopTimer();
+      secondsLeft = 15 * 60;
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      document.getElementById('timerDisplay').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // TEMPLATES LOGIC
+    function copyTemplate(type) {
+      let text = '';
+      if (type === 'dod') {
+        text = `DEFINITION OF DONE (DoD) - J CONSULTORÍAS:\n1. Código revisado por al menos 1 par.\n2. Pruebas unitarias ejecutadas con éxito (>80% cobertura).\n3. Documentación técnica actualizada en Wiki.\n4. Desplegado en entorno de Staging/Pruebas.\n5. Aprobado por el Product Owner.`;
+      } else if (type === 'starfish') {
+        text = `PLANTILLA RETROSPECTIVA ESTRELLA DE MAR (J CONSULTORÍAS):\n- Comenzar a hacer:\n- Hacer más de:\n- Continuar haciendo:\n- Hacer menos de:\n- Detener / Dejar de hacer:`;
+      } else if (type === 'okrs') {
+        text = `MATRIZ DE OKRs (J CONSULTORÍAS):\nOBJETIVO: Aumentar la velocidad de entrega del producto.\n- KR1: Reducir el Cycle Time de 12 a 5 días.\n- KR2: Incrementar la cobertura de automatización al 70%.\n- KR3: Lograr un NPS interno de equipo superior a 8/10.`;
+      }
+
+      navigator.clipboard.writeText(text);
+      alert('¡Plantilla copiada al portapapeles!');
+    }
+  </script>
+</body>
+</html>
